@@ -1,5 +1,5 @@
 #!/bin/bash
 
-IPYTHON_PORT=280597
+IPYTHON_PORT=2020
 jupyter notebook --port="${IPYTHON_PORT}" --port-retries=0 --ip='::' --no-browser
 
