@@ -22,61 +22,71 @@ class Generator(torch.nn.Module):
         super(Generator, self).__init__()
         self._layers = torch.nn.Sequential(
             torch.nn.UpsamplingNearest2d(scale_factor=4),
-            torch.nn.Conv2d(
-                in_channels=latent_space_dim,
-                out_channels=base_features_depth * 8,
-                kernel_size=3,
-                stride=1,
-                padding=1,
-                bias=False,
+            torch.nn.utils.spectral_norm(
+                torch.nn.Conv2d(
+                    in_channels=latent_space_dim,
+                    out_channels=base_features_depth * 8,
+                    kernel_size=5,
+                    stride=1,
+                    padding=3,
+                    bias=False,
+                ),
             ),
             torch.nn.BatchNorm2d(base_features_depth * 8),
             torch.nn.LeakyReLU(0.2, inplace=True),
             # B x 512 x 4 x 4
             torch.nn.UpsamplingNearest2d(scale_factor=2),
-            torch.nn.Conv2d(
-                in_channels=base_features_depth * 8,
-                out_channels=base_features_depth * 4,
-                kernel_size=3,
-                stride=1,
-                padding=1,
-                bias=False,
+            torch.nn.utils.spectral_norm(
+                torch.nn.Conv2d(
+                    in_channels=base_features_depth * 8,
+                    out_channels=base_features_depth * 4,
+                    kernel_size=5,
+                    stride=1,
+                    padding=3,
+                    bias=False,
+                ),
             ),
             torch.nn.BatchNorm2d(base_features_depth * 4),
             torch.nn.LeakyReLU(0.2, inplace=True),
             # B x 256 x 8 x 8
             torch.nn.UpsamplingNearest2d(scale_factor=2),
-            torch.nn.Conv2d(
-                in_channels=base_features_depth * 4,
-                out_channels=base_features_depth * 2,
-                kernel_size=3,
-                stride=1,
-                padding=1,
-                bias=False,
+            torch.nn.utils.spectral_norm(
+                torch.nn.Conv2d(
+                    in_channels=base_features_depth * 4,
+                    out_channels=base_features_depth * 2,
+                    kernel_size=5,
+                    stride=1,
+                    padding=3,
+                    bias=False,
+                ),
             ),
             torch.nn.BatchNorm2d(base_features_depth * 2),
             torch.nn.LeakyReLU(0.2, inplace=True),
             # B x 128 x 16 x 16
             torch.nn.UpsamplingNearest2d(scale_factor=2),
-            torch.nn.Conv2d(
-                in_channels=base_features_depth * 2,
-                out_channels=base_features_depth,
-                kernel_size=3,
-                stride=1,
-                padding=1,
-                bias=False,
+            torch.nn.utils.spectral_norm(
+                torch.nn.Conv2d(
+                    in_channels=base_features_depth * 2,
+                    out_channels=base_features_depth,
+                    kernel_size=5,
+                    stride=1,
+                    padding=3,
+                    bias=False,
+                ),
             ),
             torch.nn.BatchNorm2d(base_features_depth),
             torch.nn.LeakyReLU(0.2, inplace=True),
             # B x 64 x 32 x32
             torch.nn.UpsamplingNearest2d(scale_factor=2),
-            torch.nn.Conv2d(
-                in_channels=base_features_depth,
-                out_channels=3,
-                kernel_size=3,
-                stride=1,
-                padding=1,
-                bias=False,
+            torch.nn.utils.spectral_norm(
+                torch.nn.Conv2d(
+                    in_channels=base_features_depth,
+                    out_channels=3,
+                    kernel_size=5,
+                    stride=1,
+                    padding=3,
+                    bias=False,
+                ),
             ),
             torch.nn.Tanh(),
             # B x 3 x 64 x 64
@@ -94,57 +104,67 @@ class Discriminator(torch.nn.Module):
     def __init__(self, base_features_depth: int):
         super(Discriminator, self).__init__()
         self._layers = torch.nn.Sequential(
-            torch.nn.Conv2d(
-                in_channels=3,
-                out_channels=base_features_depth,
-                kernel_size=4,
-                stride=2,
-                padding=1,
-                bias=False,
+            torch.nn.utils.spectral_norm(
+                torch.nn.Conv2d(
+                    in_channels=3,
+                    out_channels=base_features_depth,
+                    kernel_size=4,
+                    stride=2,
+                    padding=1,
+                    bias=False,
+                ),
             ),
             torch.nn.BatchNorm2d(base_features_depth),
             torch.nn.LeakyReLU(0.2, inplace=True),
             # B x 64 x 32 x 32
-            torch.nn.Conv2d(
-                in_channels=base_features_depth,
-                out_channels=base_features_depth * 2,
-                kernel_size=4,
-                stride=2,
-                padding=1,
-                bias=False,
+            torch.nn.utils.spectral_norm(
+                torch.nn.Conv2d(
+                    in_channels=base_features_depth,
+                    out_channels=base_features_depth * 2,
+                    kernel_size=4,
+                    stride=2,
+                    padding=1,
+                    bias=False,
+                ),
             ),
             torch.nn.BatchNorm2d(base_features_depth * 2),
             torch.nn.LeakyReLU(0.2, inplace=True),
             # B x 128 x 16 x 16
-            torch.nn.Conv2d(
-                in_channels=base_features_depth * 2,
-                out_channels=base_features_depth * 4,
-                kernel_size=4,
-                stride=2,
-                padding=1,
-                bias=False,
+            torch.nn.utils.spectral_norm(
+                torch.nn.Conv2d(
+                    in_channels=base_features_depth * 2,
+                    out_channels=base_features_depth * 4,
+                    kernel_size=4,
+                    stride=2,
+                    padding=1,
+                    bias=False,
+                ),
             ),
             torch.nn.BatchNorm2d(base_features_depth * 4),
             torch.nn.LeakyReLU(0.2, inplace=True),
             # B x 256 x 8 x 8
-            torch.nn.Conv2d(
-                in_channels=base_features_depth * 4,
-                out_channels=base_features_depth * 8,
-                kernel_size=4,
-                stride=2,
-                padding=1,
-                bias=False,
+            torch.nn.utils.spectral_norm(
+                torch.nn.Conv2d(
+                    in_channels=base_features_depth * 4,
+                    out_channels=base_features_depth * 8,
+                    kernel_size=4,
+                    stride=2,
+                    padding=1,
+                    bias=False,
+                ),
             ),
             torch.nn.BatchNorm2d(base_features_depth * 8),
             torch.nn.LeakyReLU(0.2, inplace=True),
             # B x 512 x 4 x 4
-            torch.nn.Conv2d(
-                in_channels=base_features_depth * 8,
-                out_channels=1,
-                kernel_size=4,
-                stride=1,
-                padding=0,
-                bias=False,
+            torch.nn.utils.spectral_norm(
+                torch.nn.Conv2d(
+                    in_channels=base_features_depth * 8,
+                    out_channels=1,
+                    kernel_size=4,
+                    stride=1,
+                    padding=0,
+                    bias=False,
+                ),
             ),
             torch.nn.Sigmoid(),
             # B x 1 x 1 x 1
